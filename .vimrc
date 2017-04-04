@@ -270,6 +270,10 @@ set spelllang=en_gb,en_us
 " Spellfile (can add/delete custom words to/from the dictionary) is enabled
 " by default and stores into ~/.vim/spell/{spelllang}.{encoding}.add).
 
+"Allow jumping to starting braces *NOT* in the first column
+map [[ ?{<CR>w99[{
+imap [[ ?{<CR>w99[{
+
 "better pageup/pagedown"
 map    <PageUp> <C-U>
 imap   <PageUp> <Esc><C-U>i

@@ -154,8 +154,9 @@ export CSCOPE_DB=/p4/depot/cscope.out
 set -o vi
 
 # Alias
-alias pst="ps auxf"
-alias build_mojo="jump linux; if [ -z ${IMAGE+x} ]; then source source-me.env; fi; bitbake -c cleansstate mojolibc; bitbake mojolibc"
+if [ -f ~/.bash_aliase ]; then
+  . ~/.bash_aliases
+fi
 
 # Add RVM to PATH for scripting. Make sure this is the last PATH variable change.
 export PATH="$PATH:$HOME/.rvm/bin"
