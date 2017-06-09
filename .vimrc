@@ -6,6 +6,7 @@
 " https://github.com/s3rvac/dotfiles/blob/master/vim/.vimrc - Petr Zemek <s3rvac@gmail.com>
 " http://www.hermann-uwe.de/files/vimrc.
 " S. Doherty's vimrc
+"h ttp://coderoncode.com/tools/2017/04/16/vim-the-perfect-ide.html
 "------------------------------------------------------------------------------
 
 "------------------------------------------------------------------------------
@@ -17,7 +18,10 @@
 
 if v:version >= 700
   set nocompatible               " be iMproved
+  syntax on
+  set nowrap
   filetype off                   " required!
+  set nocscopeverbose            " to avoid error from cscope_maps
 
   set rtp+=~/.vim/bundle/Vundle.vim
   call vundle#begin()
@@ -30,17 +34,66 @@ if v:version >= 700
   " The following are examples of different formats supported.
   " Keep Plugin commands between vundle#begin/end.
   " plugin on GitHub repo
-  Plugin 'tpope/vim-fugitive'
-  Plugin 'christoomey/vim-tmux-navigator'
-  Plugin 'scrooloose/syntastic'
+  """"""""""""""""""""""""""""""""""""
+  " Utility
+  """"""""""""""""""""""""""""""""""""
+  Plugin 'scrooloose/nerdtree'
+  Plugin 'majutsushi/tagbar'
+  " Tab complete
+  Plugin 'ervandew/supertab'
+  " :BufOnly to kill buffers
+  Plugin 'BufOnly.vim'
+  " ,ww to swap windows
+  Plugin 'wesQ3/vim-windowswap'
+  " snip - see UltiSnips config below
+  Plugin 'SirVer/ultisnips'
+  " Fuzzy Finder
+  Plugin 'junegunn/fzf.vim'
+  Plugin 'junegunn/fzf'
+  " Text alignment
+  Plugin 'godlygeek/tabular'
+  " File search
+  Plugin 'ctrlpvim/ctrlp.vim'
+  " Vim Tmux interaction - investigate further
+  Plugin 'benmills/vimux'
+  " Vim buffer manager - ,b
+  Plugin 'jeetsukumaran/vim-buffergator'
+  " Serach for TODO/FIXME - :SearchTasks
+  Plugin 'gilsondev/searchtasks.vim'
+  " Auto-complete
+  Plugin 'Shuogo/neocomplete.vim'
+  " Auto-build
+  Plugin 'tpope/vim-dispatch'
+
+
+  """"""""""""""""""""""""""""""""""""
+  " Generic Programming Support
+  """"""""""""""""""""""""""""""""""""
+  Plugin 'jakedouglas/exuberant-ctags'
+  Plugin 'honza/vim-snippets'
+  Plugin 'Townk/vim-autoclose'
+  Plugin 'tomtom/tcomment_vim'
+  Plugin 'tobyS/vmustache'
+  Plugin 'janko-m/vim-test'
+  Plugin 'maksimr/vim-jsbeautify'
+  Plugin 'vim-syntastic/syntastic'
+  Plugin 'neomake/neomake'
+
+  """"""""""""""""""""""""""""""""""""
+  " Other
+  """"""""""""""""""""""""""""""""""""
   Plugin 'altercation/vim-colors-solarized'
-  Plugin 'chazy/cscope_maps'
-  Plugin 'Valloric/YouCompleteMe'
-  Plugin 'rdnetto/YCM-Generator'
-  Plugin 'L9'
-  Plugin 'vim-scripts/FuzzyFinder'
   Plugin 'qpkorr/vim-bufkill'
-  Plugin 'dhruvasagar/vim-vinegar'
+
+  "Plugin 'tpope/vim-fugitive'
+  "Plugin 'christoomey/vim-tmux-navigator'
+  "Plugin 'scrooloose/syntastic'
+  "Plugin 'chazy/cscope_maps'
+  "Plugin 'rdnetto/YCM-Generator'
+  "Plugin 'Valloric/YouCompleteMe'
+  "Plugin 'L9'
+  "Plugin 'vim-scripts/FuzzyFinder'
+  "Plugin 'dhruvasagar/vim-vinegar'
 
   " All of your Plugins must be added before the following line
   call vundle#end()            " required
@@ -766,9 +819,31 @@ if v:version >= 700
   let g:syntastic_check_on_open = 1
   let g:syntastic_check_on_wq = 0
   let g:syntastic_c_include_dirs = [ ]
+  let g:syntastic_c_checkers = ['splint', 'gcc']
   let g:syntastic_mode_map = { 'mode': 'passive', 'active_filetypes': [],'passive_filetypes': [] }
   nnoremap <C-w>E :SyntasticCheck<CR> :SyntasticToggleMode<CR>
 endif
+
+
+"----------------------------------------
+" Tagbar: Ultimate Tags?
+"----------------------------------------
+map <C-m> :TagbarToggle<CR>
+
+"----------------------------------------
+" Vim-UtilSnips Configuration
+" Trigger configuration. Do not use <tab> if you use https://github.com/Valloric/YouCompleteMe.
+"----------------------------------------
+let g:UltiSnipsExpandTrigger="<tab>"
+let g:UltiSnipsJumpForwardTrigger="<c-b>"
+let g:UltiSnipsJumpBackwardTrigger="<c-z>"
+let g:UltiSnipsEditSplit="vertical" " If you want :UltiSnipsEdit to split your window. "
+
+
+"----------------------------------------
+" CtrlP file searching
+"----------------------------------------
+nnoremap <Leader>O :CtrlP<CR>
 
 " bind K to grep word under cursor
 "nnoremap K :grep! "\b<C-R><C-W>\b"<CR>:cw<CR>
