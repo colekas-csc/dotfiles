@@ -26,6 +26,9 @@ if v:version >= 700
   set rtp+=~/.vim/bundle/Vundle.vim
   call vundle#begin()
 
+  """"""""""""""""""""""""""""
+  " Update with :PluginInstall
+  """"""""""""""""""""""""""""
   " let Vundle manage Vundle
   " required!
   Plugin 'VundleVim/Vundle.vim'
@@ -61,7 +64,7 @@ if v:version >= 700
   " Serach for TODO/FIXME - :SearchTasks
   Plugin 'gilsondev/searchtasks.vim'
   " Auto-complete
-  Plugin 'Shuogo/neocomplete.vim'
+  Plugin 'Shougo/neocomplete.vim'
   " Auto-build
   Plugin 'tpope/vim-dispatch'
 
@@ -69,7 +72,10 @@ if v:version >= 700
   """"""""""""""""""""""""""""""""""""
   " Generic Programming Support
   """"""""""""""""""""""""""""""""""""
+  " Tags
   Plugin 'jakedouglas/exuberant-ctags'
+  Plugin 'ludovicchabant/vim-gutentags'
+
   Plugin 'honza/vim-snippets'
   Plugin 'Townk/vim-autoclose'
   Plugin 'tomtom/tcomment_vim'
@@ -277,7 +283,7 @@ set completeopt=longest,menuone
 set complete-=i
 " Enable omni completion.
 set omnifunc=syntaxcomplete#Complete
-" set tags=./tags,./TAGS,tags,TAGS
+set tags=/p4/depot/tags
 
 " Searching.
 set hlsearch            " Highlight search matches.
@@ -609,8 +615,8 @@ command! -nargs=1 SilentExecute execute ':silent !' . <q-args> | execute ':redra
 "------------------------------------------------------------------------------
 
 " The leader and local-leader characters.
-let mapleader = ','
-let maplocalleader = ','
+let mapleader = "\<Space>"
+let maplocalleader = "\<Space>"
 
 " General command aliases.
 cnoreabbrev tn tabnew
@@ -644,7 +650,7 @@ vnoremap > >gv
 noremap gV `[v`]
 
 " Hitting space in normal/visual mode will make the current search disappear.
-noremap <silent> <Space> :silent nohlsearch<CR>
+noremap <silent> <Space>h :silent nohlsearch<CR>
 
 " Insert the contents of the clipboard.
 nnoremap <silent> <Leader>P :set paste<CR>"+]P:set nopaste<CR>
@@ -801,6 +807,15 @@ nnoremap <Leader>vim :tabe ~/.vimrc<CR>
 " .bib file.
 nnoremap <Leader>bib :tabe *.bib<CR>
 
+function! GetHelpOnCwordInTab()
+    if &filetype == "vim"
+        execute 'tab help ' . expand("<cword>")
+    else
+        execute 'tabnew <bar> read ! ' . &keywordprg . expand("<cword>")
+    endif
+endfunction
+autocmd FileType * nnoremap <Leader>K :call GetHelpOnCwordInTab()<CR>
+
 "------------------------------------------------------------------------------
 " Plugins.
 "------------------------------------------------------------------------------
@@ -843,7 +858,7 @@ let g:UltiSnipsEditSplit="vertical" " If you want :UltiSnipsEdit to split your w
 "----------------------------------------
 " CtrlP file searching
 "----------------------------------------
-nnoremap <Leader>O :CtrlP<CR>
+"nnoremap <Leader>O :CtrlP<CR>
 
 " bind K to grep word under cursor
 "nnoremap K :grep! "\b<C-R><C-W>\b"<CR>:cw<CR>
@@ -1195,6 +1210,47 @@ au FileType mail setl spell         " Enable spellchecking.
 au FileType mail setl spelllang=cs
 au FileType mail setl expandtab     " Use spaces instead of tabs.
 augroup end
+
+"------------------------------------------------------------------------------
+" Neocomplete
+"------------------------------------------------------------------------------
+" Use neocomplete.
+let g:neocomplete#enable_at_startup = 1
+" Use smartcase.
+let g:neocomplete#enable_smart_case = 1
+" Set minimum syntax keyword length.
+let g:neocomplete#sources#syntax#min_keyword_length = 3
+
+" Plugin key-mappings.
+inoremap <expr><C-g>     neocomplete#undo_completion()
+inoremap <expr><C-l>     neocomplete#complete_common_string()
+
+" Recommended key-mappings.
+" <CR>: close popup and save indent.
+inoremap <silent> <CR> <C-r>=<SID>my_cr_function()<CR>
+function! s:my_cr_function()
+  return (pumvisible() ? "\<C-y>" : "" ) . "\<CR>"
+  " For no inserting <CR> key.
+  "return pumvisible() ? "\<C-y>" : "\<CR>"
+endfunction
+
+" <TAB>: completion.
+inoremap <expr><TAB>  pumvisible() ? "\<C-n>" : "\<TAB>"
+" <C-h>, <BS>: close popup and delete backword char.
+inoremap <expr><C-h> neocomplete#smart_close_popup()."\<C-h>"
+inoremap <expr><BS> neocomplete#smart_close_popup()."\<C-h>"
+
+" Enable omni completion.
+autocmd FileType css setlocal omnifunc=csscomplete#CompleteCSS
+autocmd FileType html,markdown setlocal omnifunc=htmlcomplete#CompleteTags
+autocmd FileType javascript setlocal omnifunc=javascriptcomplete#CompleteJS
+autocmd FileType python setlocal omnifunc=pythoncomplete#Complete
+autocmd FileType xml setlocal omnifunc=xmlcomplete#CompleteTags
+
+" Enable heavy omni completion.
+if !exists('g:neocomplete#sources#omni#input_patterns')
+  let g:neocomplete#sources#omni#input_patterns = {}
+endif
 
 "------------------------------------------------------------------------------
 " Typos correction.
